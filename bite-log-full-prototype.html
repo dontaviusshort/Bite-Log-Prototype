@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bite Log</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EFF2EA;--back:#DCE2D5;--surf:#fff;--sunk:#E7EBE0;--ink:#20261F;--soft:#5B6355;--faint:#8B927F;--pri:#33513B;--onpri:#F3F6EE;--acc:#D8AC3E;--accink:#5B4415;--bad:#B24A3F;--line:#D7DBCF;--line2:#C1C7B6;color-scheme:light}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#171B16;--back:#101310;--surf:#212620;--sunk:#272C25;--ink:#EDEFE7;--soft:#ABB2A0;--faint:#767D6C;--pri:#7FA688;--onpri:#16201A;--acc:#E3BD5D;--accink:#2A200C;--bad:#E28579;--line:#33392F;--line2:#414939;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#171B16;--back:#101310;--surf:#212620;--sunk:#272C25;--ink:#EDEFE7;--soft:#ABB2A0;--faint:#767D6C;--pri:#7FA688;--onpri:#16201A;--acc:#E3BD5D;--accink:#2A200C;--bad:#E28579;--line:#33392F;--line2:#414939;color-scheme:dark}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--back);color:var(--ink);font-family:'Work Sans','Noto Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+[hidden]{display:none!important}
+.stage{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem 1rem}
+.dev{width:100%;max-width:390px;min-height:760px;background:var(--bg);border:1px solid var(--line2);border-radius:40px;overflow:hidden;position:relative;box-shadow:0 30px 60px -30px rgba(0,0,0,.35)}
+.scr{display:none;flex-direction:column;min-height:760px;padding:30px 22px 24px}
+.scr.on{display:flex}
+h1,h2{font-family:'Fraunces','Noto Serif',serif;font-weight:500;margin:0}
+h1{font-size:27px;line-height:1.15}h2{font-size:21px}
+p{margin:0;line-height:1.5}
+.soft{color:var(--soft);font-size:14px}
+.bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;min-height:34px}
+.back{width:34px;height:34px;border-radius:50%;border:1px solid var(--line2);background:none;color:var(--soft);font-size:18px;cursor:pointer}
+.globe{display:flex;gap:6px;background:var(--surf);border:1px solid var(--line2);color:var(--ink);border-radius:20px;padding:7px 12px;font:600 13px inherit;font-family:inherit;cursor:pointer}
+label{display:block;font-size:13px;color:var(--soft);margin:0 0 6px}
+input[type=text],input[type=password],input[type=number]{width:100%;font:15px inherit;font-family:inherit;padding:11px 13px;border-radius:7px;border:1px solid var(--line2);background:var(--surf);color:var(--ink);outline:none;margin-bottom:14px}
+input:focus{border-color:var(--pri)}
+.btn{width:100%;padding:13px;border:0;border-radius:7px;background:var(--pri);color:var(--onpri);font:600 15px inherit;font-family:inherit;cursor:pointer;text-align:center;display:block}
+.btn.ghost{background:none;color:var(--pri);border:1px solid var(--line2)}
+.lnk{background:none;border:0;color:var(--pri);font:600 13px inherit;font-family:inherit;cursor:pointer;padding:0}
+.sw{text-align:center;margin-top:14px;font-size:13px;color:var(--soft)}
+.err{background:color-mix(in srgb,var(--bad) 14%,var(--surf));color:var(--bad);font-size:13px;padding:10px 12px;border-radius:7px;margin-bottom:14px}
+.hint{font-size:12px;color:var(--faint);text-align:center;margin-top:auto;padding-top:18px}
+.seg{display:flex;gap:4px;background:var(--sunk);border-radius:8px;padding:3px;margin-bottom:16px}
+.seg button{flex:1;border:0;background:none;padding:8px;border-radius:6px;font:600 13px inherit;font-family:inherit;color:var(--soft);cursor:pointer}
+.seg button.on{background:var(--surf);color:var(--ink)}
+.two{display:flex;gap:10px}.two>div{flex:1}
+.card{background:var(--surf);border:1px solid var(--line);border-radius:18px;padding:18px;margin-top:14px}
+.big{font:500 34px 'Fraunces',serif}
+.note{font-size:11.5px;color:var(--faint);margin-top:10px}
+.hero{display:flex;align-items:center;gap:16px}
+.ring{position:relative;width:96px;height:96px;flex-shrink:0}.ring svg{transform:rotate(-90deg)}
+.ring b{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font:500 21px 'Fraunces',serif}
+.ring b small{font:400 10px 'Work Sans',sans-serif;color:var(--faint)}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+.tile{background:var(--surf);border:1px solid var(--line);border-radius:18px;padding:16px;text-align:start;cursor:pointer;color:var(--ink);font-family:inherit;min-height:104px;display:flex;flex-direction:column;justify-content:space-between}
+.tile b{font-size:14.5px;display:block}.tile small{color:var(--faint);font-size:12px}
+.tile.feat{grid-column:span 2;background:var(--pri);color:var(--onpri);border:0;min-height:0;gap:2px}
+.tile.feat small{color:var(--onpri);opacity:.8}
+.badge{background:var(--acc);color:var(--accink);font-size:11px;font-weight:700;border-radius:20px;padding:2px 8px;align-self:flex-start}
+.out{margin-top:auto;padding-top:18px}
+.cam{position:relative;background:#16201A;border-radius:18px;min-height:230px;display:flex;align-items:center;justify-content:center;overflow:hidden;color:#D9DED2;font-size:13px;text-align:center;padding:20px}
+.cam img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.cam span{position:relative;background:rgba(0,0,0,.45);padding:7px 13px;border-radius:20px;color:#fff}
+.stp{display:flex;align-items:center;justify-content:space-between;background:var(--sunk);border-radius:8px;padding:8px 12px;margin:6px 0 12px}
+.stp button{width:30px;height:30px;border-radius:50%;border:1px solid var(--line2);background:var(--surf);color:var(--ink);font-size:16px;cursor:pointer}
+.li{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--line)}
+.li:last-child{border:0}.li small{display:block;color:var(--faint);font-size:12px}
+.pill{background:color-mix(in srgb,var(--acc) 28%,transparent);color:var(--accink);font-weight:600;font-size:13px;border-radius:20px;padding:3px 9px;white-space:nowrap}
+.li button{background:none;border:0;color:var(--faint);cursor:pointer;margin-inline-start:8px}
+.bg{position:absolute;inset:0;background:rgba(0,0,0,.4);display:none;z-index:40}.bg.on{display:block}
+.sheet{position:absolute;inset-inline:0;bottom:0;background:var(--bg);border-radius:24px 24px 0 0;padding:20px 18px 24px;z-index:50;transform:translateY(105%);transition:transform .25s}
+.sheet.on{transform:none}.sheet h2{margin-bottom:12px}
+.opt{display:flex;justify-content:space-between;width:100%;background:var(--surf);border:1px solid var(--line);border-radius:10px;padding:13px 14px;margin-bottom:8px;font:500 15px inherit;font-family:inherit;color:var(--ink);cursor:pointer}
+.opt.sel{border-color:var(--pri)}
+.toast{position:absolute;left:22px;right:22px;bottom:22px;background:var(--ink);color:var(--bg);padding:11px 14px;border-radius:7px;font-size:13px;text-align:center;opacity:0;pointer-events:none;transition:opacity .2s;z-index:60}.toast.on{opacity:1}
+select{width:100%;font:15px inherit;font-family:inherit;padding:11px 13px;border-radius:7px;border:1px solid var(--line2);background:var(--surf);color:var(--ink);margin-bottom:14px}
+.sheet{max-height:82%;overflow:auto}
+[dir=rtl] .back{transform:scaleX(-1)}
+</style>
+</head>
+<body>
+<div class="stage"><div class="dev">
+
+<div class="scr on" id="login">
+  <div class="bar"><span></span><button class="globe" data-open>🌐 <span class="cur"></span></button></div>
+  <h1 data-t="welcome"></h1><p class="soft" data-t="tagline" style="margin:6px 0 26px"></p>
+  <div class="err" id="err" hidden></div>
+  <label data-t="user"></label><input type="text" id="un" autocomplete="username">
+  <label data-t="pass"></label><input type="password" id="pw" autocomplete="current-password">
+  <button class="btn" id="lgBtn" data-t="login"></button>
+  <div class="sw"><span id="swTxt" data-t="noAcct"></span> <button class="lnk" id="swBtn" data-t="create"></button></div>
+  <p class="hint" data-t="demo"></p>
+</div>
+
+<div class="scr" id="setup">
+  <div class="bar"><button class="back" id="setBack" data-go="menu">‹</button><button class="globe" data-open>🌐 <span class="cur"></span></button></div>
+  <h1 data-t="setupT"></h1><p class="soft" data-t="setupL" style="margin:6px 0 18px"></p>
+  <div class="seg"><button data-unit="kg" class="on">kg</button><button data-unit="lb">lb</button></div>
+  <label data-t="gender"></label><div class="seg"><button data-sex="m" class="on" data-t="male"></button><button data-sex="f" data-t="female"></button><button data-sex="o" data-t="other"></button></div>
+  <div class="two"><div><label data-t="age"></label><input type="number" id="ag" min="18" max="100" inputmode="numeric"></div><div><label><span data-t="height"></span> (<span id="hu">cm</span>)</label><input type="number" id="ht" min="50" inputmode="decimal"></div></div>
+  <div class="two"><div><label data-t="cur"></label><input type="number" id="cw" min="20" inputmode="decimal"></div><div><label data-t="goalw"></label><input type="number" id="gw" min="20" inputmode="decimal"></div></div>
+  <label data-t="activity"></label><select id="ac"><option value="0" data-t="act1"></option><option value="1" data-t="act2"></option><option value="2" data-t="act3"></option><option value="3" data-t="act4"></option><option value="4" data-t="act5"></option></select>
+  <p class="err" id="a18" data-t="age18" hidden></p>
+  <div class="card" id="calc" hidden>
+    <p class="soft" data-t="tgt"></p><div class="big"><span id="tv">0</span> <small style="font:500 14px 'Work Sans'">kcal / <span data-t="day"></span></small></div>
+    <p class="soft" id="plan" style="margin-top:4px"></p><p class="note" data-t="simple"></p>
+  </div>
+  <div class="out"><button class="btn" id="saveG" data-t="save" disabled></button></div>
+</div>
+
+<div class="scr" id="menu">
+  <div class="bar"><span class="soft" id="hello"></span><button class="globe" data-open>🌐 <span class="cur"></span></button></div>
+  <div class="card hero" style="margin-top:0">
+    <div class="ring"><svg width="96" height="96" viewBox="0 0 96 96"><circle cx="48" cy="48" r="40" fill="none" stroke="var(--sunk)" stroke-width="9"/><circle id="arc" cx="48" cy="48" r="40" fill="none" stroke="var(--acc)" stroke-width="9" stroke-linecap="round" stroke-dasharray="251" stroke-dashoffset="251"/></svg><b><span id="eaten">0</span><small data-t="eatenL"></small></b></div>
+    <div><p class="soft" data-t="tgt"></p><div class="big" id="mt" style="font-size:28px"></div><p class="soft" id="left"></p></div>
+  </div>
+  <div class="tiles">
+    <button class="tile feat" data-go="scan"><b data-t="scan"></b><small data-t="scanSub"></small></button>
+    <button class="tile" data-go="log"><span class="badge" id="lc">0</span><span><b data-t="logT"></b><small data-t="logSub"></small></span></button>
+    <button class="tile" data-go="setup"><span style="font-size:20px">🎯</span><span><b data-t="myGoal"></b><small id="gs"></small></span></button>
+    <button class="tile" data-open style="grid-column:span 2;min-height:0;flex-direction:row;align-items:center"><span><b data-t="lang"></b><small id="ln"></small></span><span style="font-size:20px">🌐</span></button>
+  </div>
+  <div class="out"><button class="btn ghost" id="outBtn" data-t="out"></button></div>
+</div>
+
+<div class="scr" id="scan">
+  <div class="bar"><button class="back" data-go="menu">‹</button><button class="globe" data-open>🌐 <span class="cur"></span></button></div>
+  <h2 data-t="scan" style="margin-bottom:14px"></h2>
+  <div class="cam" id="cam"><span data-t="camHint"></span></div>
+  <label class="btn" style="margin-top:12px"><span data-t="photo"></span><input type="file" id="file" accept="image/*" capture="environment" hidden></label>
+  <div class="sw"><button class="lnk" id="manBtn" data-t="manual"></button></div>
+  <div class="card" id="res" hidden>
+    <b id="rn" style="font:500 19px 'Fraunces',serif"></b><p class="note" id="rc" style="margin:2px 0 8px"></p>
+    <label data-t="portion"></label>
+    <div class="stp"><button id="sm">−</button><b id="sv">1</b><button id="sp">+</button></div>
+    <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px"><span class="soft" data-t="total"></span><b class="big" style="font-size:22px" id="rt"></b></div>
+    <button class="btn" id="addR" data-t="add"></button><p class="note" data-t="demoNote"></p>
+  </div>
+  <div class="card" id="bad" hidden><b data-t="cant"></b><p class="soft" data-t="dark" style="margin-top:4px"></p></div>
+  <div class="card" id="man" hidden>
+    <label data-t="fname"></label><input type="text" id="mn"><label data-t="kps"></label><input type="number" id="mk" min="0">
+    <button class="btn" id="addM" data-t="add"></button>
+  </div>
+</div>
+
+<div class="scr" id="log">
+  <div class="bar"><button class="back" data-go="menu">‹</button><button class="globe" data-open>🌐 <span class="cur"></span></button></div>
+  <h2 data-t="logT" style="margin-bottom:8px"></h2><p class="soft" id="ltot"></p>
+  <div id="lst" style="margin-top:10px"></div>
+</div>
+
+<div class="bg" id="bg"></div>
+<div class="sheet" id="sheet"><h2 data-t="lang"></h2><div id="opts"></div></div>
+<div class="toast" id="toast"></div>
+</div></div>
+
+<script>
+(function(){
+var $=function(s){return document.querySelector(s)},$$=function(s){return document.querySelectorAll(s)};
+var LG=[{c:'en',n:'English'},{c:'es',n:'Español'},{c:'fr',n:'Français'},{c:'pt',n:'Português'},{c:'ru',n:'Русский'},{c:'zh',n:'中文'},{c:'ja',n:'日本語'},{c:'de',n:'Deutsch'},{c:'it',n:'Italiano'},{c:'hi',n:'हिन्दी'},{c:'ar',n:'العربية'},{c:'ko',n:'한국어'}];
+var T={
+en:{welcome:'Welcome to Bite Log',tagline:'Snap your meals. Reach your goal weight.',user:'Username',pass:'Password',login:'Log in',create:'Create account',noAcct:'New here?',haveAcct:'Already registered?',bad:'Invalid username or password.',taken:'That username is taken.',fill:'Enter a username and a password of 8+ characters.',demo:'Demo account: demo / Passw0rd',
+setupT:'Let’s set your goal',setupL:'Tell us where you are and where you want to be. We’ll work out your daily calories.',cur:'Current weight',goalw:'Goal weight',tgt:'Your daily target',day:'day',planL:'About {n} weeks at a steady pace (0.5 kg per week)',planG:'About {n} weeks at a steady pace (0.5 kg per week)',keep:'You’re at your goal. This is a maintenance target.',simple:'Simplified estimate. A full version would also use age, height and activity level.',save:'Save and continue',
+hello:'Hello',eatenL:'kcal eaten',left:'{n} kcal left',over:'{n} kcal over',scan:'Scan food',scanSub:'Take a photo to log a meal',logT:'Today’s log',logSub:'{n} meals',myGoal:'My goal',lang:'Language',out:'Log out',
+camHint:'Take a photo of your meal',photo:'Take photo',manual:'Enter manually',ident:'Identifying your meal…',portion:'Portion (servings)',total:'Total',add:'Add to log',conf:'{n}% confidence',demoNote:'Demo estimate from the photo’s color and brightness. A real build would call a food-recognition service.',cant:'Couldn’t identify this one',dark:'The photo looked too dark. Retake it or enter the food manually.',fname:'Food name',kps:'Calories per serving',added:'Added to today’s log',empty:'Nothing logged yet.',saved:'Language updated',srv:'serving(s)',
+salad:'Garden salad',pizza:'Slice of pizza',banana:'Banana',eggs:'Scrambled eggs',rice:'Bowl of rice',chicken:'Grilled chicken',sandwich:'Turkey sandwich',oatmeal:'Bowl of oatmeal'},
+es:{welcome:'Bienvenido a Bite Log',tagline:'Fotografía tus comidas. Alcanza tu peso meta.',user:'Usuario',pass:'Contraseña',login:'Iniciar sesión',create:'Crear cuenta',noAcct:'¿Eres nuevo?',haveAcct:'¿Ya tienes cuenta?',bad:'Usuario o contraseña incorrectos.',taken:'Ese usuario ya existe.',fill:'Ingresa un usuario y una contraseña de 8+ caracteres.',demo:'Cuenta demo: demo / Passw0rd',
+setupT:'Definamos tu meta',setupL:'Dinos dónde estás y dónde quieres llegar. Calcularemos tus calorías diarias.',cur:'Peso actual',goalw:'Peso meta',tgt:'Tu meta diaria',day:'día',planL:'Unas {n} semanas a un ritmo constante (0,5 kg por semana)',planG:'Unas {n} semanas a un ritmo constante (0,5 kg por semana)',keep:'Ya estás en tu meta. Esta es una meta de mantenimiento.',simple:'Estimación simplificada. Una versión completa también usaría edad, estatura y nivel de actividad.',save:'Guardar y continuar',
+hello:'Hola',eatenL:'kcal ingeridas',left:'Te quedan {n} kcal',over:'{n} kcal de más',scan:'Escanear comida',scanSub:'Toma una foto para registrar una comida',logT:'Registro de hoy',logSub:'{n} comidas',myGoal:'Mi meta',lang:'Idioma',out:'Cerrar sesión',
+camHint:'Toma una foto de tu comida',photo:'Tomar foto',manual:'Ingresar manualmente',ident:'Identificando tu comida…',portion:'Porción (raciones)',total:'Total',add:'Añadir al registro',conf:'{n}% de confianza',demoNote:'Estimación de demostración según el color y brillo de la foto. Una versión real usaría un servicio de reconocimiento de alimentos.',cant:'No se pudo identificar',dark:'La foto se veía muy oscura. Repítela o ingresa el alimento manualmente.',fname:'Nombre del alimento',kps:'Calorías por ración',added:'Añadido al registro de hoy',empty:'Aún no hay nada registrado.',saved:'Idioma actualizado',srv:'ración(es)',
+salad:'Ensalada',pizza:'Porción de pizza',banana:'Plátano',eggs:'Huevos revueltos',rice:'Tazón de arroz',chicken:'Pollo a la parrilla',sandwich:'Sándwich de pavo',oatmeal:'Tazón de avena'},
+fr:{welcome:'Bienvenue sur Bite Log',tagline:'Photographiez vos repas. Atteignez votre poids cible.',user:'Nom d’utilisateur',pass:'Mot de passe',login:'Se connecter',create:'Créer un compte',noAcct:'Nouveau ?',haveAcct:'Déjà inscrit ?',bad:'Identifiant ou mot de passe invalide.',taken:'Ce nom d’utilisateur est pris.',fill:'Saisissez un identifiant et un mot de passe de 8+ caractères.',demo:'Compte démo : demo / Passw0rd',
+setupT:'Définissons votre objectif',setupL:'Dites-nous où vous en êtes et où vous voulez aller. Nous calculerons vos calories quotidiennes.',cur:'Poids actuel',goalw:'Poids cible',tgt:'Votre objectif quotidien',day:'jour',planL:'Environ {n} semaines à un rythme régulier (0,5 kg par semaine)',planG:'Environ {n} semaines à un rythme régulier (0,5 kg par semaine)',keep:'Vous êtes à votre objectif. Ceci est un objectif de maintien.',simple:'Estimation simplifiée. Une version complète utiliserait aussi l’âge, la taille et le niveau d’activité.',save:'Enregistrer et continuer',
+hello:'Bonjour',eatenL:'kcal consommées',left:'Il reste {n} kcal',over:'{n} kcal en trop',scan:'Scanner un repas',scanSub:'Prenez une photo pour noter un repas',logT:'Journal du jour',logSub:'{n} repas',myGoal:'Mon objectif',lang:'Langue',out:'Se déconnecter',
+camHint:'Prenez votre repas en photo',photo:'Prendre une photo',manual:'Saisir manuellement',ident:'Identification du repas…',portion:'Portion (parts)',total:'Total',add:'Ajouter au journal',conf:'{n}% de confiance',demoNote:'Estimation de démonstration d’après la couleur et la luminosité de la photo. Une vraie version appellerait un service de reconnaissance alimentaire.',cant:'Impossible d’identifier ce plat',dark:'La photo semblait trop sombre. Reprenez-la ou saisissez l’aliment manuellement.',fname:'Nom de l’aliment',kps:'Calories par portion',added:'Ajouté au journal du jour',empty:'Rien de noté pour l’instant.',saved:'Langue mise à jour',srv:'portion(s)',
+salad:'Salade composée',pizza:'Part de pizza',banana:'Banane',eggs:'Œufs brouillés',rice:'Bol de riz',chicken:'Poulet grillé',sandwich:'Sandwich à la dinde',oatmeal:'Bol de flocons d’avoine'}};
+var NK='welcome,tagline,user,pass,login,create,noAcct,haveAcct,bad,taken,fill,setupT,setupL,cur,goalw,tgt,day,planL,keep,save,hello,eatenL,left,over,scan,scanSub,logT,logSub,myGoal,lang,out,camHint,photo,manual,ident,portion,total,add,conf,cant,dark,fname,kps,added,empty,saved,srv,salad,pizza,banana,eggs,rice,chicken,sandwich,oatmeal,age,height,gender,male,female,other,activity,act1,act2,act3,act4,act5,age18'.split(','),NX=NK.slice(55);
+function X(c,ks,s){T[c]=T[c]||{};var v=s.split('|');ks.forEach(function(k,i){T[c][k]=v[i]})}
+X('en',NX,'Age|Height|Gender|Male|Female|Other|Activity level|Sedentary (little exercise)|Lightly active (1–3 days/week)|Moderately active (3–5 days/week)|Very active (6–7 days/week)|Extra active (physical job + training)|Calorie targets are for adults 18 and over.');
+X('es',NX,'Edad|Estatura|Sexo|Hombre|Mujer|Otro|Nivel de actividad|Sedentario (poco ejercicio)|Ligeramente activo (1–3 días/sem.)|Moderadamente activo (3–5 días/sem.)|Muy activo (6–7 días/sem.)|Extra activo (trabajo físico + entrenamiento)|Las metas calóricas son para adultos de 18 años o más.');
+X('fr',NX,'Âge|Taille|Sexe|Homme|Femme|Autre|Niveau d’activité|Sédentaire (peu d’exercice)|Légèrement actif (1–3 j/sem.)|Modérément actif (3–5 j/sem.)|Très actif (6–7 j/sem.)|Extra actif (travail physique + entraînement)|Les objectifs caloriques sont réservés aux adultes de 18 ans et plus.');
+X('pt',NK,'Bem-vindo ao Bite Log|Fotografe suas refeições. Alcance seu peso ideal.|Usuário|Senha|Entrar|Criar conta|Novo por aqui?|Já tem conta?|Usuário ou senha inválidos.|Esse usuário já existe.|Informe um usuário e uma senha com 8+ caracteres.|Vamos definir sua meta|Diga onde você está e aonde quer chegar. Calcularemos suas calorias diárias.|Peso atual|Peso desejado|Sua meta diária|dia|Cerca de {n} semanas em ritmo constante|Você já está na meta. Esta é uma meta de manutenção.|Salvar e continuar|Olá|kcal consumidas|Restam {n} kcal|{n} kcal acima|Escanear comida|Tire uma foto para registrar uma refeição|Diário de hoje|{n} refeições|Minha meta|Idioma|Sair|Tire uma foto da sua refeição|Tirar foto|Inserir manualmente|Identificando sua refeição…|Porção (unidades)|Total|Adicionar ao diário|{n}% de confiança|Não foi possível identificar|A foto está muito escura. Tire outra ou insira o alimento manualmente.|Nome do alimento|Calorias por porção|Adicionado ao diário de hoje|Nada registrado ainda.|Idioma atualizado|porção(ões)|Salada|Fatia de pizza|Banana|Ovos mexidos|Tigela de arroz|Frango grelhado|Sanduíche de peru|Tigela de aveia|Idade|Altura|Sexo|Masculino|Feminino|Outro|Nível de atividade|Sedentário (pouco exercício)|Levemente ativo (1–3 dias/sem.)|Moderadamente ativo (3–5 dias/sem.)|Muito ativo (6–7 dias/sem.)|Extremamente ativo (trabalho físico + treino)|As metas calóricas são para maiores de 18 anos.');
+X('ru',NK,'Добро пожаловать в Bite Log|Фотографируйте еду. Достигайте нужного веса.|Имя пользователя|Пароль|Войти|Создать аккаунт|Впервые здесь?|Уже есть аккаунт?|Неверное имя пользователя или пароль.|Это имя уже занято.|Введите имя и пароль от 8 символов.|Определим вашу цель|Укажите текущий и желаемый вес. Мы рассчитаем вашу суточную норму калорий.|Текущий вес|Желаемый вес|Ваша суточная норма|день|Примерно {n} нед. в спокойном темпе|Вы уже достигли цели. Это норма для поддержания веса.|Сохранить и продолжить|Здравствуйте|ккал съедено|Осталось {n} ккал|Превышено на {n} ккал|Сканировать еду|Сфотографируйте блюдо, чтобы записать его|Дневник за сегодня|Приёмов пищи: {n}|Моя цель|Язык|Выйти|Сфотографируйте своё блюдо|Сделать фото|Ввести вручную|Определяем блюдо…|Порция|Итого|Добавить в дневник|Уверенность: {n}%|Не удалось распознать|Фото слишком тёмное. Переснимите или введите блюдо вручную.|Название блюда|Калории на порцию|Добавлено в дневник за сегодня|Пока ничего не записано.|Язык изменён|порц.|Овощной салат|Кусок пиццы|Банан|Яичница-болтунья|Миска риса|Курица-гриль|Сэндвич с индейкой|Миска овсянки|Возраст|Рост|Пол|Мужской|Женский|Другой|Уровень активности|Сидячий образ жизни|Лёгкая активность (1–3 дня в неделю)|Умеренная активность (3–5 дней в неделю)|Высокая активность (6–7 дней в неделю)|Очень высокая (физическая работа + тренировки)|Расчёт калорий доступен только с 18 лет.');
+X('zh',NK,'欢迎使用 Bite Log|拍下每一餐，达成理想体重。|用户名|密码|登录|创建账户|新用户？|已有账户？|用户名或密码无效。|该用户名已被使用。|请输入用户名和至少 8 位的密码。|设定你的目标|告诉我们你的现状和目标，我们来计算每日所需热量。|当前体重|目标体重|每日目标热量|天|按稳定节奏约需 {n} 周|你已达到目标，这是维持体重的热量。|保存并继续|你好|千卡已摄入|还剩 {n} 千卡|超出 {n} 千卡|扫描食物|拍照记录一餐|今日记录|{n} 餐|我的目标|语言|退出登录|拍下你的餐食|拍照|手动输入|正在识别餐食…|份量|总计|添加到记录|置信度 {n}%|无法识别|照片太暗，请重拍或手动输入食物。|食物名称|每份热量|已添加到今日记录|还没有记录。|语言已更新|份|蔬菜沙拉|披萨|香蕉|炒蛋|米饭|烤鸡肉|火鸡三明治|燕麦粥|年龄|身高|性别|男|女|其他|活动水平|久坐（几乎不运动）|轻度活动（每周 1–3 天）|中度活动（每周 3–5 天）|高度活动（每周 6–7 天）|极高活动（体力工作＋训练）|热量目标仅适用于 18 岁及以上成年人。');
+X('ja',NK,'Bite Log へようこそ|食事を撮影して、目標体重へ。|ユーザー名|パスワード|ログイン|アカウント作成|初めてですか？|アカウントをお持ちですか？|ユーザー名またはパスワードが正しくありません。|そのユーザー名は使用されています。|ユーザー名と8文字以上のパスワードを入力してください。|目標を設定しましょう|現在の体重と目標体重を入力すると、1日に必要なカロリーを計算します。|現在の体重|目標体重|1日の目標カロリー|日|無理のないペースで約 {n} 週間|目標に到達しています。これは維持用の目標です。|保存して続ける|こんにちは|kcal 摂取|残り {n} kcal|{n} kcal オーバー|食事をスキャン|写真を撮って食事を記録|今日の記録|{n} 食|マイ目標|言語|ログアウト|食事の写真を撮ってください|写真を撮る|手動で入力|食事を識別中…|分量|合計|記録に追加|信頼度 {n}%|識別できませんでした|写真が暗すぎます。撮り直すか、手動で入力してください。|食品名|1食あたりのカロリー|今日の記録に追加しました|まだ記録がありません。|言語を更新しました|人前|グリーンサラダ|ピザ1切れ|バナナ|スクランブルエッグ|ご飯1杯|グリルチキン|ターキーサンド|オートミール1杯|年齢|身長|性別|男性|女性|その他|活動レベル|座りがち（ほぼ運動なし）|軽い活動（週1〜3日）|中程度の活動（週3〜5日）|高い活動（週6〜7日）|非常に高い（肉体労働＋トレーニング）|カロリー目標は18歳以上の方が対象です。');
+X('de',NK,'Willkommen bei Bite Log|Mahlzeiten fotografieren. Wunschgewicht erreichen.|Benutzername|Passwort|Anmelden|Konto erstellen|Neu hier?|Schon registriert?|Ungültiger Benutzername oder ungültiges Passwort.|Dieser Benutzername ist vergeben.|Gib einen Benutzernamen und ein Passwort mit mindestens 8 Zeichen ein.|Legen wir dein Ziel fest|Sag uns, wo du stehst und wohin du willst. Wir berechnen deinen Kalorienbedarf.|Aktuelles Gewicht|Zielgewicht|Dein Tagesziel|Tag|Etwa {n} Wochen in gleichmäßigem Tempo|Du bist bereits am Ziel. Das ist ein Erhaltungswert.|Speichern und weiter|Hallo|kcal gegessen|Noch {n} kcal|{n} kcal darüber|Essen scannen|Foto aufnehmen, um eine Mahlzeit zu erfassen|Heutiges Protokoll|{n} Mahlzeiten|Mein Ziel|Sprache|Abmelden|Fotografiere deine Mahlzeit|Foto aufnehmen|Manuell eingeben|Mahlzeit wird erkannt…|Portion|Gesamt|Zum Protokoll hinzufügen|{n} % Sicherheit|Nicht erkannt|Das Foto ist zu dunkel. Neu aufnehmen oder manuell eingeben.|Name des Lebensmittels|Kalorien pro Portion|Zum heutigen Protokoll hinzugefügt|Noch nichts erfasst.|Sprache aktualisiert|Portion(en)|Gartensalat|Stück Pizza|Banane|Rührei|Schale Reis|Gegrilltes Hähnchen|Truthahn-Sandwich|Schale Haferbrei|Alter|Größe|Geschlecht|Männlich|Weiblich|Divers|Aktivitätslevel|Sitzend (kaum Sport)|Leicht aktiv (1–3 Tage/Woche)|Mäßig aktiv (3–5 Tage/Woche)|Sehr aktiv (6–7 Tage/Woche)|Extrem aktiv (körperliche Arbeit + Training)|Kalorienziele gelten nur für Erwachsene ab 18.');
+X('it',NK,'Benvenuto su Bite Log|Fotografa i tuoi pasti. Raggiungi il tuo peso.|Nome utente|Password|Accedi|Crea account|Nuovo qui?|Hai già un account?|Nome utente o password non validi.|Questo nome utente è già in uso.|Inserisci un nome utente e una password di almeno 8 caratteri.|Impostiamo il tuo obiettivo|Dicci da dove parti e dove vuoi arrivare. Calcoleremo le tue calorie giornaliere.|Peso attuale|Peso obiettivo|Il tuo obiettivo giornaliero|giorno|Circa {n} settimane a ritmo costante|Sei già al tuo obiettivo. Questo è un valore di mantenimento.|Salva e continua|Ciao|kcal assunte|Rimangono {n} kcal|{n} kcal in più|Scansiona il cibo|Scatta una foto per registrare un pasto|Diario di oggi|{n} pasti|Il mio obiettivo|Lingua|Esci|Fotografa il tuo pasto|Scatta foto|Inserisci manualmente|Identificazione del pasto…|Porzione|Totale|Aggiungi al diario|{n}% di sicurezza|Impossibile identificare|La foto è troppo scura. Rifalla o inserisci il cibo manualmente.|Nome dell’alimento|Calorie per porzione|Aggiunto al diario di oggi|Ancora nulla registrato.|Lingua aggiornata|porzione/i|Insalata mista|Fetta di pizza|Banana|Uova strapazzate|Ciotola di riso|Pollo alla griglia|Panino al tacchino|Ciotola di avena|Età|Altezza|Sesso|Uomo|Donna|Altro|Livello di attività|Sedentario (poco esercizio)|Leggermente attivo (1–3 giorni/sett.)|Moderatamente attivo (3–5 giorni/sett.)|Molto attivo (6–7 giorni/sett.)|Estremamente attivo (lavoro fisico + allenamento)|Gli obiettivi calorici sono per adulti dai 18 anni in su.');
+X('hi',NK,'Bite Log में आपका स्वागत है|अपना खाना खींचें। अपने लक्ष्य वज़न तक पहुँचें।|उपयोगकर्ता नाम|पासवर्ड|लॉग इन करें|खाता बनाएँ|नए हैं?|पहले से खाता है?|उपयोगकर्ता नाम या पासवर्ड गलत है।|यह उपयोगकर्ता नाम पहले से लिया गया है।|उपयोगकर्ता नाम और कम से कम 8 अक्षरों का पासवर्ड दर्ज करें।|आइए आपका लक्ष्य तय करें|बताइए आप अभी कहाँ हैं और कहाँ पहुँचना चाहते हैं। हम आपकी रोज़ की कैलोरी निकालेंगे।|वर्तमान वज़न|लक्ष्य वज़न|आपका दैनिक लक्ष्य|दिन|स्थिर गति से लगभग {n} सप्ताह|आप अपने लक्ष्य पर हैं। यह वज़न बनाए रखने का लक्ष्य है।|सहेजें और आगे बढ़ें|नमस्ते|kcal खाई गई|{n} kcal बाकी|{n} kcal अधिक|खाना स्कैन करें|भोजन दर्ज करने के लिए फ़ोटो लें|आज का लॉग|{n} भोजन|मेरा लक्ष्य|भाषा|लॉग आउट|अपने भोजन की फ़ोटो लें|फ़ोटो लें|हाथ से दर्ज करें|भोजन पहचाना जा रहा है…|मात्रा|कुल|लॉग में जोड़ें|{n}% भरोसा|पहचान नहीं हो सकी|फ़ोटो बहुत अँधेरी है। दोबारा लें या खाना हाथ से दर्ज करें।|खाने का नाम|प्रति सर्विंग कैलोरी|आज के लॉग में जोड़ा गया|अभी कुछ दर्ज नहीं है।|भाषा अपडेट हुई|सर्विंग|सलाद|पिज़्ज़ा का टुकड़ा|केला|भुने हुए अंडे|चावल का कटोरा|ग्रिल्ड चिकन|टर्की सैंडविच|दलिया का कटोरा|आयु|ऊँचाई|लिंग|पुरुष|महिला|अन्य|गतिविधि स्तर|निष्क्रिय (बहुत कम व्यायाम)|हल्का सक्रिय (सप्ताह में 1–3 दिन)|मध्यम सक्रिय (सप्ताह में 3–5 दिन)|बहुत सक्रिय (सप्ताह में 6–7 दिन)|अत्यधिक सक्रिय (शारीरिक काम + प्रशिक्षण)|कैलोरी लक्ष्य केवल 18 वर्ष या उससे अधिक के वयस्कों के लिए हैं।');
+X('ar',NK,'مرحبًا بك في Bite Log|صوّر وجباتك. وصل إلى وزنك المستهدف.|اسم المستخدم|كلمة المرور|تسجيل الدخول|إنشاء حساب|جديد هنا؟|لديك حساب بالفعل؟|اسم المستخدم أو كلمة المرور غير صحيحة.|اسم المستخدم مستخدم بالفعل.|أدخل اسم مستخدم وكلمة مرور من 8 أحرف على الأقل.|لنحدد هدفك|أخبرنا بوزنك الحالي ووزنك المستهدف وسنحسب سعراتك اليومية.|الوزن الحالي|الوزن المستهدف|هدفك اليومي|يوم|حوالي {n} أسبوعًا بوتيرة ثابتة|أنت عند هدفك. هذا هدف للحفاظ على الوزن.|حفظ ومتابعة|مرحبًا|سعرة مُتناولة|المتبقي {n} سعرة|زيادة {n} سعرة|مسح الطعام|التقط صورة لتسجيل وجبة|سجل اليوم|{n} وجبات|هدفي|اللغة|تسجيل الخروج|التقط صورة لوجبتك|التقاط صورة|إدخال يدوي|جارٍ التعرف على وجبتك…|الحصة|الإجمالي|إضافة إلى السجل|ثقة {n}%|تعذّر التعرف|الصورة مظلمة جدًا. أعد التقاطها أو أدخل الطعام يدويًا.|اسم الطعام|السعرات لكل حصة|تمت الإضافة إلى سجل اليوم|لا شيء مسجل بعد.|تم تحديث اللغة|حصة|سلطة|شريحة بيتزا|موز|بيض مخفوق|طبق أرز|دجاج مشوي|ساندويتش ديك رومي|طبق شوفان|العمر|الطول|الجنس|ذكر|أنثى|آخر|مستوى النشاط|خامل (تمارين قليلة)|نشاط خفيف (1–3 أيام أسبوعيًا)|نشاط متوسط (3–5 أيام أسبوعيًا)|نشاط عالٍ (6–7 أيام أسبوعيًا)|نشاط مرتفع جدًا (عمل بدني + تدريب)|أهداف السعرات للبالغين من 18 عامًا فما فوق.');
+X('ko',NK,'Bite Log에 오신 것을 환영합니다|식사를 촬영하고 목표 체중에 도달하세요.|사용자 이름|비밀번호|로그인|계정 만들기|처음이신가요?|이미 계정이 있으신가요?|사용자 이름 또는 비밀번호가 올바르지 않습니다.|이미 사용 중인 사용자 이름입니다.|사용자 이름과 8자 이상의 비밀번호를 입력하세요.|목표를 설정해 볼까요|현재 체중과 목표 체중을 알려주시면 하루 필요 칼로리를 계산해 드려요.|현재 체중|목표 체중|하루 목표 칼로리|일|꾸준한 속도로 약 {n}주|이미 목표에 도달했습니다. 체중 유지용 목표입니다.|저장하고 계속|안녕하세요|kcal 섭취|{n} kcal 남음|{n} kcal 초과|음식 스캔|사진을 찍어 식사를 기록하세요|오늘의 기록|{n}끼|내 목표|언어|로그아웃|식사 사진을 찍어 주세요|사진 찍기|직접 입력|식사를 인식하는 중…|분량|합계|기록에 추가|신뢰도 {n}%|인식할 수 없습니다|사진이 너무 어둡습니다. 다시 찍거나 음식을 직접 입력하세요.|음식 이름|1회 제공량당 칼로리|오늘의 기록에 추가했습니다|아직 기록이 없습니다.|언어가 변경되었습니다|인분|가든 샐러드|피자 한 조각|바나나|스크램블 에그|밥 한 그릇|구운 닭고기|칠면조 샌드위치|오트밀 한 그릇|나이|키|성별|남성|여성|기타|활동 수준|거의 운동 안 함|가벼운 활동(주 1–3일)|보통 활동(주 3–5일)|활발한 활동(주 6–7일)|매우 활발(육체노동 + 운동)|칼로리 목표는 만 18세 이상 성인용입니다.');
+var K={salad:180,pizza:290,banana:105,eggs:220,rice:205,chicken:335,sandwich:410,oatmeal:240};
+var BK={green:['salad'],red:['pizza'],yellow:['banana','eggs','rice'],brown:['chicken','sandwich','oatmeal'],neutral:['rice','sandwich']};
+function ld(){try{return JSON.parse(localStorage.getItem('bl_full'))||{u:{},l:{}}}catch(e){return{u:{},l:{}}}}
+var db=ld(),me=null,lang=db.lang||(function(){var b=(navigator.language||'en').slice(0,2);return T[b]?b:'en'})(),cs='login',reg=false,unit='kg',sex='m',pend=null,sv=1,ptr=0;
+function sav(){try{localStorage.setItem('bl_full',JSON.stringify(db))}catch(e){}}
+function hs(s){var h=5381;for(var i=0;i<s.length;i++)h=((h<<5)+h+s.charCodeAt(i))|0;return''+h}
+if(!db.u.demo){db.u.demo={p:hs('Passw0rd')};sav()}
+function t(k,v){var s=T[lang][k];if(s==null)s=T.en[k]||k;if(v)for(var x in v)s=s.replace('{'+x+'}',v[x]);return s}
+function ents(){var k=me+'|'+new Date().toLocaleDateString('sv');return db.l[k]||(db.l[k]=[])}
+function nm(e){return e.id?t(e.id):e.n}
+function toast(m){var e=$('#toast');e.textContent=m;e.classList.add('on');clearTimeout(ptr);ptr=setTimeout(function(){e.classList.remove('on')},1800)}
+function go(id){cs=id;$$('.scr').forEach(function(s){s.classList.toggle('on',s.id===id)});R()}
+function plan(c,g,u,a,h,s,x){var f=u==='lb'?0.4536:1,ck=c*f,gk=g*f,d=gk-ck,hc=u==='lb'?h*2.54:h,b=10*ck+6.25*hc-5*a+(s==='m'?5:s==='f'?-161:-78),m=b*[1.2,1.375,1.55,1.725,1.9][x],tg=Math.abs(d)<0.5?m:m+(d>0?550:-550);tg=Math.round(Math.min(4000,Math.max(s==='m'?1500:1200,tg))/10)*10;return{t:tg,w:Math.ceil(Math.abs(d)/0.5),d:d}}
+function inp(){return{c:parseFloat($('#cw').value),g:parseFloat($('#gw').value),a:parseFloat($('#ag').value),h:parseFloat($('#ht').value),s:sex,x:+$('#ac').value}}
+function rSetup(){var i=inp(),ok=i.c>=20&&i.g>=20&&i.a>=18&&i.h>=50;$('#a18').hidden=!(i.a<18);$('#hu').textContent=unit==='lb'?'in':'cm';$('#calc').hidden=!ok;$('#saveG').disabled=!ok;if(!ok)return;var p=plan(i.c,i.g,unit,i.a,i.h,i.s,i.x);$('#tv').textContent=p.t.toLocaleString();$('#plan').textContent=Math.abs(p.d)<0.5?t('keep'):t('planL',{n:p.w})}
+function rMenu(){var g=db.u[me].g,e=ents(),s=0;e.forEach(function(x){s+=x.k*x.s});$('#hello').textContent=t('hello')+', '+me;$('#eaten').textContent=Math.round(s);$('#mt').textContent=g.t.toLocaleString()+' kcal';var r=g.t-s;$('#left').textContent=r>=0?t('left',{n:Math.round(r)}):t('over',{n:Math.round(-r)});$('#arc').style.strokeDashoffset=251*(1-Math.min(1,s/g.t));$('#lc').textContent=e.length;$('#gs').textContent=g.c+' → '+g.g+' '+g.u;$('.tile small[data-t=logSub]').textContent=t('logSub',{n:e.length});$('#ln').textContent=LG.filter(function(l){return l.c===lang})[0].n}
+function rLog(){var e=ents(),s=0,h='';e.forEach(function(x,i){s+=x.k*x.s;h+='<div class="li"><div>'+nm(x).replace(/</g,'&lt;')+'<small>'+new Date(x.ts).toLocaleTimeString(lang,{hour:'numeric',minute:'2-digit'})+' · '+x.s+' '+t('srv')+'</small></div><div style="display:flex;align-items:center"><span class="pill">'+Math.round(x.k*x.s)+' kcal</span><button data-del="'+i+'">✕</button></div></div>'});$('#lst').innerHTML=h||'<p class="soft">'+t('empty')+'</p>';$('#ltot').textContent=Math.round(s)+' kcal';$$('[data-del]').forEach(function(b){b.onclick=function(){ents().splice(+b.dataset.del,1);sav();rLog()}})}
+function rRes(){if(!pend)return;$('#rn').textContent=t(pend.id);$('#rc').textContent=t('conf',{n:pend.c});$('#sv').textContent=sv;$('#rt').textContent=Math.round(pend.k*sv)+' kcal'}
+function R(){if(cs==='menu')rMenu();if(cs==='log')rLog();if(cs==='setup')rSetup();if(cs==='scan')rRes()}
+function apply(c,say){lang=c;db.lang=c;sav();document.documentElement.lang=c;document.documentElement.dir=c==='ar'?'rtl':'ltr';$$('[data-t]').forEach(function(e){e.textContent=t(e.dataset.t)});$$('.cur').forEach(function(e){e.textContent=c.toUpperCase()});opts();R();if(say)toast(t('saved'))}
+function opts(){$('#opts').innerHTML=LG.map(function(l){return'<button class="opt'+(l.c===lang?' sel':'')+'" data-c="'+l.c+'"><span>'+l.n+'</span><span>'+(l.c===lang?'✓':'')+'</span></button>'}).join('');$$('.opt').forEach(function(b){b.onclick=function(){apply(b.dataset.c,true);sh(0)}})}
+function sh(o){$('#bg').classList.toggle('on',o);$('#sheet').classList.toggle('on',o)}
+document.addEventListener('click',function(e){var g=e.target.closest('[data-go]'),o=e.target.closest('[data-open]');if(g)go(g.dataset.go);if(o)sh(1)});
+$('#bg').onclick=function(){sh(0)};
+function mode(r){reg=r;$('#lgBtn').dataset.t=r?'create':'login';$('#swTxt').dataset.t=r?'haveAcct':'noAcct';$('#swBtn').dataset.t=r?'login':'create';$('#err').hidden=true;apply(lang)}
+$('#swBtn').onclick=function(){mode(!reg)};
+function fail(k){var e=$('#err');e.dataset.t=k;e.textContent=t(k);e.hidden=false}
+$('#lgBtn').onclick=function(){var u=$('#un').value.trim(),p=$('#pw').value;
+ if(reg){if(!u||p.length<8)return fail('fill');if(db.u[u])return fail('taken');db.u[u]={p:hs(p)};sav()}
+ else if(!db.u[u]||db.u[u].p!==hs(p))return fail('bad');
+ me=u;$('#pw').value='';$('#err').hidden=true;if(db.u[me].g)go('menu');else{$('#setBack').style.visibility='hidden';$('#cw').value=$('#gw').value=$('#ag').value=$('#ht').value='';go('setup')}};
+$('#outBtn').onclick=function(){me=null;go('login')};
+$$('[data-unit]').forEach(function(b){b.onclick=function(){unit=b.dataset.unit;$$('[data-unit]').forEach(function(x){x.classList.toggle('on',x===b)});rSetup()}});
+$('#cw').oninput=$('#gw').oninput=$('#ag').oninput=$('#ht').oninput=rSetup;$('#ac').onchange=rSetup;
+$$('[data-sex]').forEach(function(b){b.onclick=function(){sex=b.dataset.sex;$$('[data-sex]').forEach(function(x){x.classList.toggle('on',x===b)});rSetup()}});
+$('#saveG').onclick=function(){var i=inp();db.u[me].g={c:i.c,g:i.g,u:unit,a:i.a,h:i.h,s:i.s,x:i.x,t:plan(i.c,i.g,unit,i.a,i.h,i.s,i.x).t};sav();$('#setBack').style.visibility='visible';go('menu')};
+$$('[data-go=setup]').forEach(function(b){b.addEventListener('click',function(){var g=db.u[me].g;if(g){unit=g.u;sex=g.s||'m';$('#cw').value=g.c;$('#gw').value=g.g;$('#ag').value=g.a||'';$('#ht').value=g.h||'';$('#ac').value=g.x||0;$$('[data-unit]').forEach(function(x){x.classList.toggle('on',x.dataset.unit===unit)});$$('[data-sex]').forEach(function(x){x.classList.toggle('on',x.dataset.sex===sex)});rSetup()}})});
+function hideAll(){$('#res').hidden=$('#bad').hidden=$('#man').hidden=true}
+function bad(){pend=null;hideAll();$('#bad').hidden=false;$('#cam span').textContent=t('camHint')}
+$('#file').onchange=function(){var f=this.files[0];if(!f)return;hideAll();var u=URL.createObjectURL(f);$('#cam').innerHTML='<img src="'+u+'" alt=""><span>'+t('ident')+'</span>';
+ var im=new Image();im.onload=function(){var c=document.createElement('canvas');c.width=c.height=40;var x=c.getContext('2d');x.drawImage(im,0,0,40,40);var d,r=0,g=0,b=0;try{d=x.getImageData(0,0,40,40).data}catch(er){return bad()}for(var i=0;i<d.length;i+=4){r+=d[i];g+=d[i+1];b+=d[i+2]}r/=1600;g/=1600;b/=1600;
+ setTimeout(function(){$('#cam span').hidden=true;if((r+g+b)/3<55)return bad();var k=g>r&&g>b&&g-Math.max(r,b)>8?'green':r>g+25&&r>b+25?'red':r>170&&g>140&&b<130?'yellow':r>g&&g>b&&r-b>10&&r<190?'brown':'neutral',a=BK[k],id=a[Math.floor(Math.random()*a.length)];pend={id:id,k:Math.round(K[id]*(0.9+Math.random()*0.2)),c:Math.round(72+Math.random()*22)};sv=1;rRes();$('#res').hidden=false},800)};im.onerror=bad;im.src=u;this.value=''};
+$('#sm').onclick=function(){sv=Math.max(0.5,sv-0.5);rRes()};$('#sp').onclick=function(){sv=Math.min(10,sv+0.5);rRes()};
+$('#addR').onclick=function(){if(!pend)return;ents().push({id:pend.id,k:pend.k,s:sv,ts:Date.now()});sav();pend=null;hideAll();$('#cam').innerHTML='<span data-t="camHint">'+t('camHint')+'</span>';toast(t('added'));go('menu')};
+$('#manBtn').onclick=function(){hideAll();$('#mn').value=$('#mk').value='';$('#man').hidden=false};
+$('#addM').onclick=function(){var n=$('#mn').value.trim(),k=parseFloat($('#mk').value);if(!n||!(k>=0))return;ents().push({n:n,k:k,s:1,ts:Date.now()});sav();hideAll();toast(t('added'));go('menu')};
+apply(lang);
+})();
+</script>
+</body>
+</html>
